@@ -6,8 +6,13 @@
 #include <cstdlib>
 #include <iomanip>
 const std::filesystem::path homepath = std::filesystem::current_path();
+const std::string RED = "\033[31m";
+const std::string GREEN = "\033[32m";
+const std::string YELLOW = "\033[33m";
+const std::string RESET = "\033[0m";
 void strToInt(std::string cmd_body) //convert str to int
 {
+	std::error_code error;
 	for (char c : cmd_body)
 	{
 		std::cout << (int)c << " ";
@@ -15,18 +20,29 @@ void strToInt(std::string cmd_body) //convert str to int
 }
 void createFile(std::string cmd_body) //create file
 {
-	std::stringstream ss(cmd_body);
-	std::string name;
-	std::string contents;
-	ss >> name;
-	std::getline(ss >> std::ws, contents);
-	std::ofstream file(name);
-	file << contents;
-	file.close();
-	std::cout << "\nFile written.";
+	std::error_code error;
+	try
+	{
+		std::stringstream ss(cmd_body);
+		std::string name;
+		std::string contents;
+		ss >> name;
+		std::getline(ss >> std::ws, contents);
+		std::ofstream file(name);
+		file << contents;
+		file.close();
+		std::cout <<GREEN<< "\nFile written."<<RESET;
+	}
+	catch(const std::filesystem::filesystem_error& e)
+	{
+		std::cout <<"Cannot create. Maybe because the item does not exist, you could be trying to print a folder (no file extention) or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
+		
+	}
 }
 void readRam(std::string cmd_body) //read ram fuction
 {
+	std::error_code error;
 	std::string allocated_ram_str = cmd_body;
 	try
 	{
@@ -51,19 +67,23 @@ void readRam(std::string cmd_body) //read ram fuction
 	}
 	catch (const std::invalid_argument &e)
 	{
-		std::cout << "Invalid argument. You may have put a charachter that is not an integer or left it blank.";
+		std::cout <<"Invalid argument. You may have put a charachter that is not an integer or left it blank.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 	catch (const std::out_of_range &e)
 	{
 		std::cout << "Unable to read that much ram!! " << allocated_ram_str << " bytes is WAAAAAY too much!";
+	std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;;
 	}
 	catch (const std::bad_alloc &e)
 	{
 		std::cout << "Unable to read that much ram!! " << allocated_ram_str << " bytes is WAAAAAY too much!";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void ls(std::string cmd_body) //list files
 {
+	std::error_code error;
 	int a = 0;
 	try
 	{
@@ -94,7 +114,7 @@ void ls(std::string cmd_body) //list files
 				a++;
 				std::cout << file.path() << "\n";
 			}
-			std::cout<<"\nScanned "<<a<< " items.";
+			std::cout<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
 		}
 		else
 		{
@@ -112,10 +132,12 @@ void ls(std::string cmd_body) //list files
 	{
 		std::cout << "Cannot list folder. Maybe because its an invalid folder, you might have written an invalid argument or there are system restrictions.";
 		std::cout<<"/nScanned "<<a<< " items.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void cd(std::string cmd_body) //move working folder.
 {
+	std::error_code error;
 	try
 	{
 		std::filesystem::current_path(cmd_body);
@@ -123,6 +145,7 @@ void cd(std::string cmd_body) //move working folder.
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot change folder. Maybe because its an invalid folder or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void makeDirectory(std::string cmd_body) //make directory
@@ -131,7 +154,7 @@ void makeDirectory(std::string cmd_body) //make directory
 	{
 		if (std::filesystem::create_directory(cmd_body))
 		{
-			std::cout << "Successfully created folder.";
+			std::cout<<GREEN << "Successfully created folder."<<RESET;
 		}
 		else
 		{
@@ -141,15 +164,17 @@ void makeDirectory(std::string cmd_body) //make directory
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot create folder. Maybe because another folder of the same name exists or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void remove(std::string cmd_body) //deletion script
 {
+	std::error_code error;
 	try
 	{
 		if (std::filesystem::remove_all(cmd_body) > 0)
 		{
-			std::cout << "Removed successfully.";
+			std::cout <<GREEN<< "Removed successfully."<<RESET;
 		}
 		else
 		{
@@ -159,10 +184,12 @@ void remove(std::string cmd_body) //deletion script
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot remove. Maybe because the item does not exist or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void rename(std::string cmd_body) //file moving renaming script
 {
+	std::error_code error;
 	try
 	{
 		std::stringstream ss(cmd_body);
@@ -171,15 +198,17 @@ void rename(std::string cmd_body) //file moving renaming script
 		ss >> name1;
 		std::getline(ss >> std::ws, name2);
 		std::filesystem::rename(name1, name2);
-		std::cout << "Renamed/Moved successfully.";
+		std::cout <<GREEN<< "Renamed/Moved successfully."<<RESET;
 	}
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot rename/move. Maybe because the item does not exist, you could be renaming to a folder (no file extention) or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void copy(std::string cmd_body) //file copying script
 {
+	std::error_code error;
 	try
 	{
 		std::stringstream ss(cmd_body);
@@ -188,15 +217,15 @@ void copy(std::string cmd_body) //file copying script
 		ss >> copy1;
 		std::getline(ss >> std::ws, copy2);
 		std::filesystem::copy(copy1, copy2, std::filesystem::copy_options::overwrite_existing);
-		std::cout << "Copied successfully.";
+		std::cout <<GREEN<< "Copied successfully."<<RESET;
 	}
 	catch (const std::filesystem::filesystem_error& e)
 	{
-		std::cout << "Cannot copy. Maybe because the item does not exist, you could be renaming to a folder (no file extention) or there are system restrictions.";
-	}
+		std::cout << "Cannot copy. Maybe because the item does not exist, you could be renaming to a folder (no file extention) or there are system restrictions.";std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;	}
 }
 void cat(std::string cmd_body)
 {
+	std::error_code error;
 	try
 	{
 		std::ifstream file(cmd_body);
@@ -210,6 +239,7 @@ void cat(std::string cmd_body)
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot print. Maybe because the item does not exist, you could be trying to print a folder (no file extention) or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 void find(std::string cmd_body)
@@ -249,8 +279,8 @@ void find(std::string cmd_body)
 				if(file.path().filename() == name)
 				{
 						
-					std::cout<<file.path()<<"\n";
-					std::cout<<"Successfully found file.";
+					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
+					std::cout<<GREEN<<"Successfully found file."<<RESET;
 					found_path = file.path().parent_path();
 				}
 			}
@@ -266,8 +296,8 @@ void find(std::string cmd_body)
 			{
 				if(file.path().filename() == name)
 				{		
-					std::cout<<file.path()<<"\n";
-					std::cout<<"Successfully found file.";
+					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
+					std::cout<<GREEN<<"Successfully found file."<<RESET;
 				}
 			}
 		}
@@ -275,7 +305,31 @@ void find(std::string cmd_body)
 	catch (const std::filesystem::filesystem_error& e)
 	{
 		std::cout << "Cannot find. Maybe because the item does not exist, you wrote an invalid argument or there are system restrictions.";
-		std::cout << "ERROR: " << e.what() << "\n";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
+	}
+}
+void listFileHex(std::string cmd_body)
+{
+	std::error_code error;
+	try
+	{
+		std::ifstream file(cmd_body);
+		std::string(content);
+		while(std::getline(file, content))
+		{
+			for (char c : content)
+			{
+				int cont = (unsigned char)c;
+				std::cout << GREEN<<std::hex << std::setw(2) << std::setfill('0') << (int)cont << " "<<RESET;
+			}
+		}
+		std::cout << "\n";		
+		file.close();
+	}
+	catch (const std::filesystem::filesystem_error& e)
+	{
+		std::cout << "Cannot print. Maybe because the item does not exist, you could be trying to print a folder (no file extention) or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
 		
@@ -298,13 +352,13 @@ std::string getCmdBody(std::string cmd) //get cmd body
 }
 int main()
 {
-	std::cout << "2026 code open source. DONT MODIFY IF NOT ORIGINAL CREATOR.\n";
+	std::cout <<"\033[36m"<< "2026 code open source. DONT MODIFY IF NOT ORIGINAL CREATOR.\n"<<RESET;
 	bool on = true;
 	while (on)
 	{
 		std::string cmd;
 		std::cout << "\n"
-				  << std::filesystem::current_path() << "/>";
+				  << std::filesystem::current_path() <<"/>";
 		std::getline(std::cin, cmd);
 		std::string cmd_type = getCmdType(cmd);
 		std::string cmd_body = getCmdBody(cmd);
@@ -362,10 +416,14 @@ int main()
 		{
 			std::filesystem::current_path(homepath);
 		}
+		else if (cmd_type == "listFileHex")
+		{
+			listFileHex(cmd_body);
+		}
 		else
 		{
-			std::cout << "Invalid command!!!  >:(\n"
-					  << cmd_type << " is not an available command!";
+			std::cout <<RED<< "Invalid command!!!  >:(\n"
+					  << cmd_type << " is not an available command!"<< RESET;
 		}
 	}
 }
