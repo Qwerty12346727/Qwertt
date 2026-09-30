@@ -181,12 +181,3 @@ These are the 20 command names checked by `main()`:
 
 - `ls`: `--sub`
 - `find`: `--list`, `--goTo`
-
-## NOT IMPLEMENTED AS COMMANDS
-
-- `--find`
-- `listFileHex`
-
-`listFileHex()` is the C++ function name. The actual command is `fileHex`.
-
-`--find` is not handled by your current parser.
