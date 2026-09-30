@@ -114,7 +114,7 @@ void ls(std::string cmd_body) //list files
 				a++;
 				std::cout << file.path() << "\n";
 			}
-			std::cout<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
+			std::cout<<std::dec<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
 		}
 		else
 		{
@@ -127,7 +127,7 @@ void ls(std::string cmd_body) //list files
 				a++;
 				std::cout << file.path() << "\n";
 			}
-			std::cout<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
+			std::cout<<std::dec<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
 		}
 	}
 	catch (const std::filesystem::filesystem_error& e)
@@ -267,6 +267,31 @@ void find(std::string cmd_body)
 		ss >> name;
 		std::getline(ss >> std::ws, path);
 		bool sub = false;
+		bool list = false;
+		if (path.find("--list") != std::string::npos)
+		{
+			size_t subPos = path.find("--list");
+			if (subPos != std::string::npos)
+			{
+				list=true;
+				size_t findPos = path.find("--list");
+    			path.erase(findPos, 6);
+    			if(!path.empty() && path[0] == ' ')
+				{
+				    path.erase(0, 1);
+				}
+				
+				while(!path.empty() && path.back() == ' ')
+				{
+				    path.pop_back();
+				}
+				
+				if(path.empty())
+				{
+				    path = "./";
+				}
+			}
+		}
 		if (path.find("--goTo") != std::string::npos)
 		{
 			size_t subPos = path.find("--goTo");
@@ -289,10 +314,14 @@ void find(std::string cmd_body)
 			}
 			for (auto file : std::filesystem::recursive_directory_iterator(path))
 			{
+				if (list == true)
+				{
+					std::cout<<file.path()<<"\n";
+				}
 				if(file.path().filename() == name)
 				{
 						
-					std::cout<<file.path()<<"\n";
+					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
 					std::cout<<GREEN<<"Successfully found file."<<RESET;
 					found_path = file.path().parent_path();
 				}
@@ -307,9 +336,13 @@ void find(std::string cmd_body)
 			}
 			for (auto file : std::filesystem::recursive_directory_iterator(path))
 			{
+				if (list == true)
+				{
+					std::cout<<file.path()<<"\n";
+				}
 				if(file.path().filename() == name)
 				{		
-					std::cout<<file.path()<<"\n";
+					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
 					std::cout<<GREEN<<"Successfully found file."<<RESET;
 				}
 			}
@@ -382,6 +415,65 @@ int main()
 			std::cout << "Exiting...\n";
 			return 0;
 		}
+		else if (cmd_type == "strToInt")
+		{
+			strToInt(cmd_body); //connects int main() vars to custom fuctions and activates fuction
+		}
+		else if (cmd_type == "createFile")
+		{
+			createFile(cmd_body);
+		}
+		else if (cmd_type == "readRam")
+		{
+			readRam(cmd_body);
+		}
+		else if (cmd_type == "ls" || cmd_type == "list")
+		{
+			ls(cmd_body);
+		}
+		else if (cmd_type == "cd" || cmd_type == "changeDirectory")
+		{
+			cd(cmd_body);
+		}
+		else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
+		{
+			makeDirectory(cmd_body);
+		}
+		else if (cmd_type == "rm" || cmd_type == "remove")
+		{
+			remove(cmd_body);
+		}
+		else if (cmd_type == "rn" || cmd_type == "rename")
+		{
+			rename(cmd_body);
+		}
+		else if (cmd_type == "cp" || cmd_type == "copy")
+		{
+			copy(cmd_body);
+		}
+		else if (cmd_type == "cat")
+		{
+			cat(cmd_body);
+		}
+		else if (cmd_type == "find")
+		{
+			find(cmd_body);
+		}
+		else if (cmd_type == "home")
+		{
+			std::filesystem::current_path(homepath);
+		}
+		else if (cmd_type == "fileHex")
+		{
+			listFileHex(cmd_body);
+		}
+		else
+		{
+			std::cout <<RED<< "Invalid command!!!  >:(\n"
+					  << cmd_type << " is not an available command!"<< RESET;
+		}
+	}
+}
 		else if (cmd_type == "strToInt")
 		{
 			strToInt(cmd_body); //connects int main() vars to custom fuctions and activates fuction
