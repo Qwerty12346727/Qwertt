@@ -124,8 +124,10 @@ void ls(std::string cmd_body) //list files
 			}
 			for (auto file : std::filesystem::directory_iterator(path))
 			{
+				a++;
 				std::cout << file.path() << "\n";
 			}
+			std::cout<<YELLOW<<"\nScanned "<<a<< " items."<<RESET;
 		}
 	}
 	catch (const std::filesystem::filesystem_error& e)
@@ -216,6 +218,17 @@ void copy(std::string cmd_body) //file copying script
 		std::string copy2; //path variables for the copy
 		ss >> copy1;
 		std::getline(ss >> std::ws, copy2);
+		if(copy2.empty())
+		{
+			int i = 0;
+			copy2 = "copy_"+copy1;
+			while(std::filesystem::exists(copy2))
+			{	 
+				 
+				copy2 = "copy_"+copy2;
+				 
+			}
+		}
 		std::filesystem::copy(copy1, copy2, std::filesystem::copy_options::overwrite_existing);
 		std::cout <<GREEN<< "Copied successfully."<<RESET;
 	}
@@ -279,7 +292,7 @@ void find(std::string cmd_body)
 				if(file.path().filename() == name)
 				{
 						
-					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
+					std::cout<<file.path()<<"\n";
 					std::cout<<GREEN<<"Successfully found file."<<RESET;
 					found_path = file.path().parent_path();
 				}
@@ -296,7 +309,7 @@ void find(std::string cmd_body)
 			{
 				if(file.path().filename() == name)
 				{		
-					std::cout<<YELLOW<<file.path()<<"\n"<<RESET;
+					std::cout<<file.path()<<"\n";
 					std::cout<<GREEN<<"Successfully found file."<<RESET;
 				}
 			}
@@ -320,7 +333,7 @@ void listFileHex(std::string cmd_body)
 			for (char c : content)
 			{
 				int cont = (unsigned char)c;
-				std::cout << GREEN<<std::hex << std::setw(2) << std::setfill('0') << (int)cont << " "<<RESET;
+				std::cout <<std::hex << std::setw(2) << std::setfill('0') << (int)cont << " "<<RESET;
 			}
 		}
 		std::cout << "\n";		
@@ -357,6 +370,7 @@ int main()
 	while (on)
 	{
 		std::string cmd;
+		std::cout << RESET;
 		std::cout << "\n"
 				  << std::filesystem::current_path() <<"/>";
 		std::getline(std::cin, cmd);
@@ -377,6 +391,57 @@ int main()
 			createFile(cmd_body);
 		}
 		else if (cmd_type == "readRam")
+		{
+			readRam(cmd_body);
+		}
+		else if (cmd_type == "ls" || cmd_type == "list")
+		{
+			ls(cmd_body);
+		}
+		else if (cmd_type == "cd" || cmd_type == "changeDirectory")
+		{
+			cd(cmd_body);
+		}
+		else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
+		{
+			makeDirectory(cmd_body);
+		}
+		else if (cmd_type == "rm" || cmd_type == "remove")
+		{
+			remove(cmd_body);
+		}
+		else if (cmd_type == "rn" || cmd_type == "rename")
+		{
+			rename(cmd_body);
+		}
+		else if (cmd_type == "cp" || cmd_type == "copy")
+		{
+			copy(cmd_body);
+		}
+		else if (cmd_type == "cat")
+		{
+			cat(cmd_body);
+		}
+		else if (cmd_type == "find")
+		{
+			find(cmd_body);
+		}
+		else if (cmd_type == "home")
+		{
+			std::filesystem::current_path(homepath);
+		}
+		else if (cmd_type == "listFileHex")
+		{
+			listFileHex(cmd_body);
+		}
+		else
+		{
+			std::cout <<RED<< "Invalid command!!!  >:(\n"
+					  << cmd_type << " is not an available command!"<< RESET;
+		}
+	}
+}
+if (cmd_type == "readRam")
 		{
 			readRam(cmd_body);
 		}
