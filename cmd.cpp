@@ -396,6 +396,75 @@ std::string getCmdBody(std::string cmd) //get cmd body
 	std::getline(ss >> std::ws, cmd_body);
 	return cmd_body;
 }
+void callCommand(std::string cmd_type, std::string cmd_body)
+{
+	if (cmd_type == "exit") //all commands
+				{
+					std::cout << "Exiting...\n";
+					exit(0);
+				}
+				else if (cmd_type == "strToInt")
+				{
+					strToInt(cmd_body); //connects int main() vars to custom fuctions and activates fuction
+				}
+				else if (cmd_type == "createFile")
+				{
+					createFile(cmd_body);
+				}
+				else if (cmd_type == "readRam")
+				{
+					readRam(cmd_body);
+				}
+				else if (cmd_type == "ls" || cmd_type == "list")
+				{
+					ls(cmd_body);
+				}
+				else if (cmd_type == "cd" || cmd_type == "changeDirectory")
+				{
+					cd(cmd_body);
+				}
+				else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
+				{
+					makeDirectory(cmd_body);
+				}
+				else if (cmd_type == "rm" || cmd_type == "remove")
+				{
+					remove(cmd_body);
+				}
+				else if (cmd_type == "rn" || cmd_type == "rename")
+				{
+					rename(cmd_body);
+				}
+				else if (cmd_type == "cp" || cmd_type == "copy")
+				{
+					copy(cmd_body);
+				}
+				else if (cmd_type == "cat")
+				{
+					cat(cmd_body);
+				}
+				else if (cmd_type == "find")
+				{
+					find(cmd_body);
+				}
+				else if (cmd_type == "home")
+				{
+					std::filesystem::current_path(homepath);
+				}
+				else if (cmd_type == "fileHex")
+				{
+					listFileHex(cmd_body);
+				}
+				else if (cmd_type == "version" || cmd_type == "ver")
+				{
+					std::cout << "1.0.9";
+				}
+				else
+				{
+					std::cout <<RED<< "Invalid command!!!  >:(\n"
+							  << cmd_type << " is not an available command!"<< RESET;
+				}
+}
 int main()
 {
 	std::cout <<"\033[36m"<< "2026 code open source. DONT MODIFY IF NOT ORIGINAL CREATOR.\n"<<RESET;
@@ -407,180 +476,26 @@ int main()
 		std::cout << "\n"
 				  << std::filesystem::current_path() <<"/>";
 		std::getline(std::cin, cmd);
-		std::string cmd_type = getCmdType(cmd);
-		std::string cmd_body = getCmdBody(cmd);
-
-		if (cmd_type == "exit") //all commands
+		if (cmd.find("|") != std::string::npos)
 		{
-			std::cout << "Exiting...\n";
-			return 0;
-		}
-		else if (cmd_type == "strToInt")
-		{
-			strToInt(cmd_body); //connects int main() vars to custom fuctions and activates fuction
-		}
-		else if (cmd_type == "createFile")
-		{
-			createFile(cmd_body);
-		}
-		else if (cmd_type == "readRam")
-		{
-			readRam(cmd_body);
-		}
-		else if (cmd_type == "ls" || cmd_type == "list")
-		{
-			ls(cmd_body);
-		}
-		else if (cmd_type == "cd" || cmd_type == "changeDirectory")
-		{
-			cd(cmd_body);
-		}
-		else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
-		{
-			makeDirectory(cmd_body);
-		}
-		else if (cmd_type == "rm" || cmd_type == "remove")
-		{
-			remove(cmd_body);
-		}
-		else if (cmd_type == "rn" || cmd_type == "rename")
-		{
-			rename(cmd_body);
-		}
-		else if (cmd_type == "cp" || cmd_type == "copy")
-		{
-			copy(cmd_body);
-		}
-		else if (cmd_type == "cat")
-		{
-			cat(cmd_body);
-		}
-		else if (cmd_type == "find")
-		{
-			find(cmd_body);
-		}
-		else if (cmd_type == "home")
-		{
-			std::filesystem::current_path(homepath);
-		}
-		else if (cmd_type == "fileHex")
-		{
-			listFileHex(cmd_body);
+			std::stringstream ss(cmd);
+			std::string part;
+			while(std::getline(ss, part, '|'))
+			{
+				if(!part.empty() && part[0] == ' ')
+				{
+					part.erase(0, 1);
+				}
+				std::string cmd_type = getCmdType(part);
+				std::string cmd_body = getCmdBody(part);
+				callCommand(cmd_type, cmd_body);
+			}
 		}
 		else
 		{
-			std::cout <<RED<< "Invalid command!!!  >:(\n"
-					  << cmd_type << " is not an available command!"<< RESET;
-		}
-	}
-}
-		else if (cmd_type == "strToInt")
-		{
-			strToInt(cmd_body); //connects int main() vars to custom fuctions and activates fuction
-		}
-		else if (cmd_type == "createFile")
-		{
-			createFile(cmd_body);
-		}
-		else if (cmd_type == "readRam")
-		{
-			readRam(cmd_body);
-		}
-		else if (cmd_type == "ls" || cmd_type == "list")
-		{
-			ls(cmd_body);
-		}
-		else if (cmd_type == "cd" || cmd_type == "changeDirectory")
-		{
-			cd(cmd_body);
-		}
-		else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
-		{
-			makeDirectory(cmd_body);
-		}
-		else if (cmd_type == "rm" || cmd_type == "remove")
-		{
-			remove(cmd_body);
-		}
-		else if (cmd_type == "rn" || cmd_type == "rename")
-		{
-			rename(cmd_body);
-		}
-		else if (cmd_type == "cp" || cmd_type == "copy")
-		{
-			copy(cmd_body);
-		}
-		else if (cmd_type == "cat")
-		{
-			cat(cmd_body);
-		}
-		else if (cmd_type == "find")
-		{
-			find(cmd_body);
-		}
-		else if (cmd_type == "home")
-		{
-			std::filesystem::current_path(homepath);
-		}
-		else if (cmd_type == "listFileHex")
-		{
-			listFileHex(cmd_body);
-		}
-		else
-		{
-			std::cout <<RED<< "Invalid command!!!  >:(\n"
-					  << cmd_type << " is not an available command!"<< RESET;
-		}
-	}
-}
-if (cmd_type == "readRam")
-		{
-			readRam(cmd_body);
-		}
-		else if (cmd_type == "ls" || cmd_type == "list")
-		{
-			ls(cmd_body);
-		}
-		else if (cmd_type == "cd" || cmd_type == "changeDirectory")
-		{
-			cd(cmd_body);
-		}
-		else if (cmd_type == "mkdir" || cmd_type == "makeDirectory")
-		{
-			makeDirectory(cmd_body);
-		}
-		else if (cmd_type == "rm" || cmd_type == "remove")
-		{
-			remove(cmd_body);
-		}
-		else if (cmd_type == "rn" || cmd_type == "rename")
-		{
-			rename(cmd_body);
-		}
-		else if (cmd_type == "cp" || cmd_type == "copy")
-		{
-			copy(cmd_body);
-		}
-		else if (cmd_type == "cat")
-		{
-			cat(cmd_body);
-		}
-		else if (cmd_type == "find")
-		{
-			find(cmd_body);
-		}
-		else if (cmd_type == "home")
-		{
-			std::filesystem::current_path(homepath);
-		}
-		else if (cmd_type == "listFileHex")
-		{
-			listFileHex(cmd_body);
-		}
-		else
-		{
-			std::cout <<RED<< "Invalid command!!!  >:(\n"
-					  << cmd_type << " is not an available command!"<< RESET;
+			std::string cmd_type = getCmdType(cmd);
+			std::string cmd_body = getCmdBody(cmd);
+			callCommand(cmd_type, cmd_body);
 		}
 	}
 }
