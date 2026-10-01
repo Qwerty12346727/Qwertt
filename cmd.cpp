@@ -5,10 +5,12 @@
 #include <filesystem>
 #include <cstdlib>
 #include <iomanip>
+#include <cctype>
 const std::filesystem::path homepath = std::filesystem::current_path();
 const std::string RED = "\033[31m";
 const std::string GREEN = "\033[32m";
 const std::string YELLOW = "\033[33m";
+const std::string CYAN = "\033[36m";
 const std::string RESET = "\033[0m";
 void strToInt(std::string cmd_body) //convert str to int
 {
@@ -154,7 +156,7 @@ void makeDirectory(std::string cmd_body) //make directory
 {
 	try
 	{
-		if (std::filesystem::create_directory(cmd_body))
+		if (std::filesystem::create_directories(cmd_body))
 		{
 			std::cout<<GREEN << "Successfully created folder."<<RESET;
 		}
@@ -378,7 +380,145 @@ void listFileHex(std::string cmd_body)
 		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
 	}
 }
-		
+void info(std::string cmd_body)
+{
+	try
+	{
+		if(!cmd_body.empty())
+		{
+			std::filesystem::path file = std::filesystem::absolute(cmd_body);
+			std::string fileType;
+			std::string ext = file.extension().string();
+			for(char& c : ext)
+			{
+				c = std::tolower(c);
+			}
+			if (!file.extension().empty())
+			{
+				if (ext == ".jpeg" || ext == ".jpg" || ext == ".png" || ext == ".tiff" || ext == ".tif" || ext == ".bmp" || ext == ".webp" || ext == ".gif" || ext == ".svg" || ext == ".ico" || ext == ".heic" || ext == ".heif" || ext == ".avif" || ext == ".jxl")
+				{
+					if ( ext == ".jpg" || ext == ".jpeg")
+					{ 
+						fileType = "Lossy" + ext +" Image";
+					}
+					else if ( ext == ".png" || ext == ".gif" || ext == ".svg")
+					{
+						fileType = "Lossless " + ext +" Image";
+					}
+					else if (ext == ".bmp")
+					{
+						fileType = "Bitmap Image";
+					}
+					else
+					{
+						fileType = ext + " Image";
+					}
+				}
+				else if (ext == ".mp3" || ext == ".wav" || ext == ".flac" || ext == ".ogg" || ext == ".oga" || ext == ".opus" || ext == ".m4a" || ext == ".m4b" || ext == ".m4p" || ext == ".aac" || ext == ".wma" || ext == ".aiff" || ext == ".aif" || ext == ".aifc" || ext == ".alac" || ext == ".amr" || ext == ".ape" || ext == ".ac3" || ext == ".eac3" || ext == ".dts" || ext == ".dtshd" || ext == ".mka" || ext == ".ra" || ext == ".rm" || ext == ".au" || ext == ".snd" || ext == ".voc" || ext == ".tta" || ext == ".wv" || ext == ".tak" || ext == ".shn" || ext == ".dsf" || ext == ".dff" || ext == ".caf" || ext == ".rf64" || ext == ".bwf" || ext == ".ast" || ext == ".avr" || ext == ".raw" || ext == ".pcm" || ext == ".svx" || ext == ".vox" || ext == ".8svx" || ext == ".16sv" || ext == ".mid" || ext == ".midi" || ext == ".kar" || ext == ".mod" || ext == ".xm" || ext == ".it" || ext == ".s3m" || ext == ".stm" || ext == ".mtm" || ext == ".ult" || ext == ".669" || ext == ".amf" || ext == ".okt" || ext == ".far" || ext == ".med" || ext == ".mptm" || ext == ".psm" || ext == ".umx" || ext == ".spc" || ext == ".nsf" || ext == ".nsfe" || ext == ".gbs" || ext == ".gym" || ext == ".hes" || ext == ".kss" || ext == ".sap" || ext == ".vgm" || ext == ".vgz" || ext == ".adx" || ext == ".brstm" || ext == ".bcstm" || ext == ".bfstm" || ext == ".dsp" || ext == ".xma" || ext == ".w64" || ext == ".wve" || ext == ".mpc" || ext == ".mpc2" || ext == ".mpc3" || ext == ".mp2" || ext == ".mp1" || ext == ".mpa" || ext == ".mpp" || ext == ".webm" || ext == ".3gp" || ext == ".3g2" || ext == ".aa" || ext == ".aax" || ext == ".aaxc" || ext == ".awb" || ext == ".ec3" || ext == ".m4r")
+				{
+					if (ext == ".flac" || ext == ".wav" || ext == ".aiff" || ext == ".aif" || ext == ".aifc" || ext == ".alac" || ext == ".ape" || ext == ".wv" || ext == ".tta" || ext == ".tak" || ext == ".shn" || ext == ".wavpack" || ext == ".dsf" || ext == ".dff" || ext == ".pcm" || ext == ".raw" || ext == ".caf" || ext == ".bwf" || ext == ".rf64" || ext == ".au" || ext == ".snd")
+					{
+						fileType = "Lossless " + ext + " Audio File";
+					}
+					else if (ext == ".mp3" || ext == ".mp1" || ext == ".mp2" || ext == ".aac" || ext == ".amr" || ext == ".awb" || ext == ".ac3" || ext == ".eac3" || ext == ".ec3" || ext == ".dts" || ext == ".ra" || ext == ".rm" || ext == ".wma" || ext == ".spx" || ext == ".gsm" || ext == ".atrac" || ext == ".xma" || ext == ".aa" || ext == ".aax" || ext == ".aaxc")
+					{
+						fileType = "Lossy " + ext + " Audio File";
+					}
+					else
+					{
+						fileType = ext + " Audio File";
+					}
+				}
+				else if ( ext == ".md" || ext == ".markdown" || ext == ".rst" || ext == ".rtf" || ext == ".doc" || ext == ".docx" || ext == ".docm" || ext == ".dot" || ext == ".dotx" || ext == ".dotm" || ext == ".odt" || ext == ".ott" || ext == ".fodt" || ext == ".pages" || ext == ".wpd" || ext == ".wps" || ext == ".wp" || ext == ".sxw" || ext == ".abw" || ext == ".lwp" || ext == ".pdf" || ext == ".djvu" || ext == ".djv" || ext == ".tex" || ext == ".latex" || ext == ".ltx" || ext == ".texi" || ext == ".texinfo" || ext == ".bib" || ext == ".epub" || ext == ".mobi" || ext == ".azw" || ext == ".azw3" || ext == ".fb2" || ext == ".chm" || ext == ".xps" || ext == ".oxps" || ext == ".pages" || ext == ".xls" || ext == ".xlsx" || ext == ".xlsm" || ext == ".xlsb" || ext == ".xlt" || ext == ".xltx" || ext == ".xltm" || ext == ".ods" || ext == ".ots" || ext == ".fods" || ext == ".numbers" || ext == ".csv" || ext == ".tsv" || ext == ".ppt" || ext == ".pptx" || ext == ".pptm" || ext == ".pps" || ext == ".ppsx" || ext == ".ppsm" || ext == ".pot" || ext == ".potx" || ext == ".potm" || ext == ".odp" || ext == ".otp" || ext == ".fodp" || ext == ".key" || ext == ".odg" || ext == ".otg" || ext == ".fodg" || ext == ".vsd" || ext == ".vsdx" || ext == ".vss" || ext == ".vst" || ext == ".vsdm" || ext == ".mpp" || ext == ".mpt" || ext == ".one" || ext == ".onetoc2" || ext == ".pub" || ext == ".pages" || ext == ".numbers" || ext == ".keynote")
+				{
+					fileType = ext + " Document";
+				}
+				else if (ext == ".c" || ext == ".h" || ext == ".cc" || ext == ".cpp" || ext == ".cxx" || ext == ".hpp" || ext == ".hxx" || ext == ".cs" || ext == ".java" || ext == ".kt" || ext == ".kts" || ext == ".swift" || ext == ".m" || ext == ".mm" || ext == ".rs" || ext == ".go" || ext == ".js" || ext == ".jsx" || ext == ".ts" || ext == ".tsx" || ext == ".py" || ext == ".pyw" || ext == ".rb" || ext == ".php" || ext == ".pl" || ext == ".pm" || ext == ".lua" || ext == ".r" || ext == ".dart" || ext == ".scala" || ext == ".sh" || ext == ".bash" || ext == ".zsh" || ext == ".fish" || ext == ".ps1" || ext == ".bat" || ext == ".cmd" || ext == ".asm" || ext == ".s" || ext == ".sql" || ext == ".html" || ext == ".htm" || ext == ".css" || ext == ".scss" || ext == ".sass" || ext == ".less" || ext == ".vue" || ext == ".svelte" || ext == ".xml" || ext == ".json" || ext == ".yaml" || ext == ".yml" || ext == ".toml" || ext == ".ini" || ext == ".cfg" || ext == ".dart")
+				{
+					fileType = ext + " Code File";
+				}
+				else if (ext == ".mp4" || ext == ".m4v" || ext == ".mkv" || ext == ".webm" || ext == ".avi" || ext == ".mov" || ext == ".qt" || ext == ".wmv" || ext == ".asf" || ext == ".flv" || ext == ".f4v" || ext == ".f4p" || ext == ".mpeg" || ext == ".mpg" || ext == ".mpe" || ext == ".m1v" || ext == ".m2v" || ext == ".m2p" || ext == ".m2ts" || ext == ".mts" || ext == ".ts" || ext == ".vob" || ext == ".evo" || ext == ".ogv" || ext == ".3gp" || ext == ".3g2" || ext == ".3gpp" || ext == ".3gpp2" || ext == ".mxf" || ext == ".rm" || ext == ".rmvb" || ext == ".amv" || ext == ".asf" || ext == ".divx" || ext == ".dv" || ext == ".fli" || ext == ".flc" || ext == ".flic" || ext == ".h264" || ext == ".h265" || ext == ".hevc" || ext == ".ivf" || ext == ".mjpg" || ext == ".mjpeg" || ext == ".nsv" || ext == ".ogm" || ext == ".rec" || ext == ".roq" || ext == ".vivo" || ext == ".yuv" || ext == ".bik" || ext == ".bk2" || ext == ".smk" || ext == ".str" || ext == ".pva" || ext == ".wtv" || ext == ".dvr-ms" || ext == ".mxf" || ext == ".nut" || ext == ".mve" || ext == ".rpl" || ext == ".svi" || ext == ".tod" || ext == ".vro" || ext == ".wtv" || ext == ".xvid")
+				{
+					if (ext == ".y4m" || ext == ".yuv" || ext == ".v210" || ext == ".v410" || ext == ".r210" || ext == ".r10k" || ext == ".ffv1" || ext == ".huffyuv" || ext == ".utvideo" || ext == ".lag")
+					{
+						fileType = "Lossless " + ext + " Video File";
+					}
+					else if (ext == ".mpg" || ext == ".mpeg" || ext == ".m1v" || ext == ".m2v" || ext == ".m2p" || ext == ".flv" || ext == ".f4v" || ext == ".wmv" || ext == ".rm" || ext == ".rmvb" || ext == ".3gp" || ext == ".3g2" || ext == ".amv" || ext == ".divx" || ext == ".xvid")
+					{
+						fileType = "Lossy " + ext+ " Video File";
+					}
+					else
+					{
+						fileType = ext + " Video File";
+					}
+				}
+				else if (ext == ".zip" || ext == ".zipx" || ext == ".7z" || ext == ".rar" || ext == ".r00" || ext == ".r01" || ext == ".tar" || ext == ".gz" || ext == ".tgz" || ext == ".bz2" || ext == ".tbz" || ext == ".tbz2" || ext == ".xz" || ext == ".txz" || ext == ".z" || ext == ".zst" || ext == ".lz" || ext == ".lz4" || ext == ".lzh" || ext == ".lha" || ext == ".cab" || ext == ".arj" || ext == ".ace" || ext == ".arc" || ext == ".jar" || ext == ".war" || ext == ".ear" || ext == ".apk" || ext == ".ipa" || ext == ".deb" || ext == ".rpm" || ext == ".pkg" || ext == ".dmg" || ext == ".sit" || ext == ".sitx" || ext == ".sea" || ext == ".zoo" || ext == ".iso" || ext == ".cpio" || ext == ".ar" || ext == ".a" || ext == ".lzip" || ext == ".br" || ext == ".snappy" || ext == ".zpaq" || ext == ".alz" || ext == ".egg" || ext == ".pea" || ext == ".kgb" || ext == ".paq" || ext == ".arc" || ext == ".uc2" || ext == ".wim" || ext == ".swm" || ext == ".esd" || ext == ".xar" || ext == ".rpm" || ext == ".msi" || ext == ".appx" || ext == ".msix" || ext == ".appxbundle" || ext == ".msixbundle")
+				{
+					fileType = ext + " Archive File";
+				}
+				else if (ext == ".iso" || ext == ".img" || ext == ".ima" || ext == ".dmg" || ext == ".cdr" || ext == ".toast" || ext == ".bin" || ext == ".cue" || ext == ".nrg" || ext == ".mdf" || ext == ".mds" || ext == ".ccd" || ext == ".sub" || ext == ".vcd" || ext == ".vhd" || ext == ".vhdx" || ext == ".vdi" || ext == ".vmdk" || ext == ".qcow" || ext == ".qcow2" || ext == ".qed" || ext == ".raw" || ext == ".vfd" || ext == ".hdd" || ext == ".hds" || ext == ".wim" || ext == ".swm" || ext == ".esd" || ext == ".fvd" || ext == ".vma" || ext == ".ova" || ext == ".ovf" || ext == ".xva" || ext == ".vpc" || ext == ".vmdk" || ext == ".dsk" || ext == ".sdi" || ext == ".vdi" || ext == ".imgpart" || ext == ".dmgpart")
+				{
+					fileType = ext + " Disk Image";
+				}
+				else if (ext == ".ttf" || ext == ".otf" || ext == ".woff" || ext == ".woff2" || ext == ".fon" || ext == ".fnt" || ext == ".pfb" || ext == ".pfm" || ext == ".bdf" || ext == ".pcf")
+				{
+					fileType = ext + " Font";
+				}
+				else if (ext == ".obj" || ext == ".fbx" || ext == ".gltf" || ext == ".glb" || ext == ".stl" || ext == ".dae" || ext == ".3ds" || ext == ".blend" || ext == ".max" || ext == ".ma" || ext == ".mb" || ext == ".c4d" || ext == ".lwo" || ext == ".lws" || ext == ".ply" || ext == ".off" || ext == ".x3d" || ext == ".wrl" || ext == ".step" || ext == ".stp" || ext == ".iges" || ext == ".igs")
+				{
+					fileType = ext + " 3D Model";
+				}
+				else if (ext == ".db" || ext == ".db3" || ext == ".sqlite" || ext == ".sqlite3" || ext == ".mdb" || ext == ".accdb" || ext == ".mdf" || ext == ".ndf" || ext == ".ldf" || ext == ".dbf" || ext == ".fdb" || ext == ".gdb" || ext == ".realm" || ext == ".rdb")
+				{
+					fileType = ext + " Database File";
+				}
+				else if (ext == "" || ext == ".exe" || ext == ".com" || ext == ".dll" || ext == ".sys" || ext == ".scr" || ext == ".msi" || ext == ".elf" || ext == ".so" || ext == ".dylib" || ext == ".bin" || ext == ".out" || ext == ".a" || ext == ".o" || ext == ".obj" || ext == ".apk" || ext == ".aab" || ext == ".deb" || ext == ".rpm" || ext == ".appimage" || ext == ".app" || ext == ".ipa")
+				{
+					fileType = ext + " Binary File";
+				}
+				else if (ext == ".srt" || ext == ".ass" || ext == ".ssa" || ext == ".vtt" || ext == ".sub" || ext == ".sbv" || ext == ".smi" || ext == ".sami" || ext == ".dfxp" || ext == ".ttml")
+				{
+					fileType = ext + " Subtitle File";
+				}
+				else if (ext == ".pem" || ext == ".crt" || ext == ".cer" || ext == ".der" || ext == ".key" || ext == ".p12" || ext == ".pfx" || ext == ".csr" || ext == ".pub")
+				{
+					fileType = ext + "Certificate File";
+				}
+				else
+				{
+					fileType = ext + " File";
+				}
+			}
+			std::cout << YELLOW
+			<< "Location: "
+			<< file.parent_path()
+			<< std::endl
+			<< "Filename: "
+			<< file.filename()
+			<< std::endl
+			<< "Extension: "
+			<< file.extension()
+			<< std::endl
+			<< "Type: "
+			<< fileType
+			<< std::endl
+			<< "Size: "
+			<< std::filesystem::file_size(cmd_body)
+			<< " bytes"
+			<< std::endl
+			<< RESET;
+		}
+		else
+		{
+			std::cout << CYAN << "Qwertt 1.1.1 2026 by Qwerty123456727. Made with cpp.";
+		}
+	}
+	catch(const std::filesystem::filesystem_error& e)
+	{
+		std::cout << "Cannot find info. Maybe because the item does not exist, you could be trying to print a folder (no file extention) or there are system restrictions.";
+		std::cout <<RED<< "ERROR: " << e.what() << "\n"<<RESET;
+	}
+}	
 std::string getCmdType(std::string cmd) //get cmd type
 {
 	std::stringstream ss(cmd);
@@ -457,7 +597,11 @@ void callCommand(std::string cmd_type, std::string cmd_body)
 				}
 				else if (cmd_type == "version" || cmd_type == "ver")
 				{
-					std::cout << "1.0.9";
+					std::cout << "1.1.1";
+				}
+				else if (cmd_type == "info")
+				{
+					info(cmd_body);
 				}
 				else
 				{
@@ -499,4 +643,3 @@ int main()
 		}
 	}
 }
-
