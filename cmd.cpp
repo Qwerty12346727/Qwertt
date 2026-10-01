@@ -360,7 +360,7 @@ void listFileHex(std::string cmd_body)
 	try
 	{
 		std::ifstream file(cmd_body);
-		std::string(content);
+		std::string content;
 		while(std::getline(file, content))
 		{
 			for (char c : content)
@@ -499,3 +499,4 @@ int main()
 		}
 	}
 }
+
